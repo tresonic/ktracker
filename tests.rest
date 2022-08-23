@@ -1,4 +1,4 @@
-@host=http://127.0.0.1:3000
+@host=http://quack-nak.de:3000
 @token="Bearer eyJ0eXAOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImFzZGYiLCJleHAiOjIwMDAwMDAwMDB9.JRKaZjEsn0y_vwjUCjfYLD1odbtOfPF9slRXAxS6PgE"
 
 #### create user
