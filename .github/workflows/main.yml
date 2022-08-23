@@ -39,8 +39,11 @@ jobs:
         run: |
           cargo build --release
           
-#      - name: Build Front End
-#        run: |
-#          cd jdav_client
-#          trunk build --release
-#          cd ..
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            ./target/release/ktracker
