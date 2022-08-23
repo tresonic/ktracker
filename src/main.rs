@@ -1,18 +1,14 @@
-//! Example JWT authorization/authentication.
+//! ktracker backend
 //!
-//! Run with
-//!
-//! ```not_rust
-//! JWT_SECRET=secret cargo run -p example-jwt
-//! ```
+//! Run with JWT_SECRET environment variable
+//! e.g. JWT_SECRET=secret cargo run
+
 
 use auth::Claims;
 use axum::{
     routing::{get, post}, Router, Extension,
 };
-// use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
-// use once_cell::sync::Lazy;
-// use serde::{Deserialize, Serialize};
+use tokio::signal;
 use std::{net::SocketAddr};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -24,31 +20,6 @@ mod models;
 mod http;
 mod db;
 
-// Quick instructions
-//
-// - get an authorization token:
-//
-// curl -s \
-//     -w '\n' \
-//     -H 'Content-Type: application/json' \
-//     -d '{"client_id":"foo","client_secret":"bar"}' \
-//     http://localhost:3000/authorize
-//
-// - visit the protected area using the authorized token
-//
-// curl -s \
-//     -w '\n' \
-//     -H 'Content-Type: application/json' \
-//     -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiQGIuY29tIiwiY29tcGFueSI6IkFDTUUiLCJleHAiOjEwMDAwMDAwMDAwfQ.M3LAZmrzUkXDC1q5mSzFAs_kJrwuKz3jOoDmjJ0G4gM' \
-//     http://localhost:3000/protected
-//
-// - try to visit the protected area using an invalid token
-//
-// curl -s \
-//     -w '\n' \
-//     -H 'Content-Type: application/json' \
-//     -H 'Authorization: Bearer blahblahblah' \
-//     http://localhost:3000/protected
 
 #[tokio::main]
 async fn main() {
@@ -62,7 +33,7 @@ async fn main() {
     let db = daba::init_db().await;
     
     let app = Router::new()
-        .route("/protected", get(protected).layer(Extension(db.clone())))
+        // .route("/protected", get(protected).layer(Extension(db.clone())))
         .route("/authorize", post(authorize).layer(Extension(db.clone())))
         .route("/create_user", post(create_user).layer(Extension(db.clone())))
         .route("/get_meters", get(get_meters).layer(Extension(db.clone())))
@@ -73,6 +44,7 @@ async fn main() {
 
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
+        .with_graceful_shutdown(shutdown_signal())
         .await
         .unwrap();
 }
@@ -84,6 +56,34 @@ async fn protected(claims: Claims) -> Result<String, AuthError> {
         claims
     ))
 }
+
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c()
+            .await
+            .expect("failed to install Ctrl+C handler");
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("failed to install signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = terminate => {},
+    }
+
+    println!("signal received, starting graceful shutdown");
+}
+
+
 
 
 
