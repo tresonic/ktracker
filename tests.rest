@@ -1,0 +1,41 @@
+@host=http://127.0.0.1:3000
+@token="Bearer eyJ0eXAOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImFzZGYiLCJleHAiOjIwMDAwMDAwMDB9.JRKaZjEsn0y_vwjUCjfYLD1odbtOfPF9slRXAxS6PgE"
+
+#### create user
+POST {{host}}/create_user
+Content-Type: application/json
+
+{
+    "username":"asdf",
+    "pass":"asdfasdf",
+    "email":"asdf@asdf.com"
+}
+
+#### authorize
+POST {{host}}/authorize
+Content-Type: application/json
+
+{"username":"asdf","pass":"asdfasdf"}
+
+
+#### access
+GET {{host}}/protected
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImFzZGYiLCJleHAiOjIwMDAwMDAwMDB9.JRKaZjEsn0y_vwjUCjfYLD1odbtOfPF9slRXAxS6PgE
+Content-Type: application/json
+
+{}
+
+
+#### get_meters
+GET {{host}}/get_meters
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImFzZGYiLCJleHAiOjIwMDAwMDAwMDB9.JRKaZjEsn0y_vwjUCjfYLD1odbtOfPF9slRXAxS6PgE
+
+
+#### create_entry
+POST {{host}}/create_entry
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImFzZGYiLCJleHAiOjIwMDAwMDAwMDB9.JRKaZjEsn0y_vwjUCjfYLD1odbtOfPF9slRXAxS6PgE
+Content-Type: application/json
+
+{
+    "meters": 100
+}
