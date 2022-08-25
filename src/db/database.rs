@@ -3,7 +3,9 @@ use sqlx::SqlitePool;
 
 use crate::{
     http::error::UserCreateError,
-    models::{AuthPayload, CreateEntryPayload, CreateUserPayload, MeterData, MeterDataList},
+    models::{
+        AuthPayload, CreateEntryPayload, CreateUserPayload, HighscoreList, MeterData, MeterDataList, HighscoreEntry,
+    },
 };
 
 #[derive(Clone)]
@@ -76,14 +78,14 @@ impl Database {
     }
 
     pub async fn get_meters(self, username: &str) -> MeterDataList {
-        let meters_vec = sqlx::query_as::<_, MeterData>("SELECT * FROM data WHERE username = ?")
+        let meters_vec = sqlx::query_as::<_, MeterData>("SELECT * FROM data WHERE username = ? order by time desc")
             .bind(username)
             .fetch_all(&self.conn)
             .await
             .unwrap();
         // if meters_vec.is_empty(){ return 0;}
 
-        let mut sum = 0;
+        let mut sum = 0.0;
         for d in &meters_vec {
             sum += d.meters;
         }
@@ -94,7 +96,36 @@ impl Database {
             entries: meters_vec,
         };
     }
+
+    pub async fn highscore(self) -> HighscoreList {
+        let mut meter_vec = sqlx::query_as::<_, HighscoreEntry>(
+            "select username, sum(meters) as meters from data group by username order by meters desc",
+        )
+        .fetch_all(&self.conn)
+        .await
+        .unwrap();
+
+        // for i in 0..50 {
+        //     if i >= meter_vec.len() {
+        //         break;
+        //     }
+        //     highscore_vec.push(meter_vec[i].meters);
+        // }
+        if meter_vec.len() > 50 {
+            meter_vec.resize(
+                50,
+                HighscoreEntry {
+                    username: "".to_string(),
+                    meters: 0.0,
+                },
+            );
+        }
+
+        HighscoreList{ entries: meter_vec }
+    }
 }
+
+
 
 pub async fn init_db() -> Database {
     println!("initializing database");

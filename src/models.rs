@@ -32,7 +32,7 @@ pub struct AuthPayload {
 
 #[derive(Debug, Deserialize)]
 pub struct CreateEntryPayload {
-    pub meters: i32,
+    pub meters: f32,
 }
 
 
@@ -40,11 +40,22 @@ pub struct CreateEntryPayload {
 pub struct MeterData {
     pub id: i64,
     pub time: String,
-    pub meters: i32,
+    pub meters: f32,
 }
 
 #[derive(Serialize)]
 pub struct MeterDataList {
-    pub sum: i32,
+    pub sum: f32,
     pub entries: Vec<MeterData>,
+}
+
+#[derive(sqlx::FromRow, Clone, Serialize)]
+pub struct HighscoreEntry {
+    pub username: String,
+    pub meters: f32,
+}
+
+#[derive(Serialize)]
+pub struct HighscoreList {
+    pub entries: Vec<HighscoreEntry>,
 }

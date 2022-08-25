@@ -1,4 +1,4 @@
-@host=http://quack-nak.de:3000
+@host=http://localhost:3000
 @token="Bearer eyJ0eXAOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImFzZGYiLCJleHAiOjIwMDAwMDAwMDB9.JRKaZjEsn0y_vwjUCjfYLD1odbtOfPF9slRXAxS6PgE"
 
 #### create user
@@ -15,7 +15,7 @@ Content-Type: application/json
 POST {{host}}/authorize
 Content-Type: application/json
 
-{"username":"asdf","pass":"asdfasdf"}
+{"username":"meem","pass":"meemmeem"}
 
 
 #### access
@@ -33,9 +33,14 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImFzZGYiLCJle
 
 #### create_entry
 POST {{host}}/create_entry
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImFzZGYiLCJleHAiOjIwMDAwMDAwMDB9.JRKaZjEsn0y_vwjUCjfYLD1odbtOfPF9slRXAxS6PgE
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Im1lZW0iLCJleHAiOjIwMDAwMDAwMDB9._hr413daLiZyLba-Ry8F00QDwzKJ6CbPmxi4wxcwfIc
 Content-Type: application/json
 
 {
-    "meters": 100
+    "meters": 10
 }
+
+#### highscore
+GET {{host}}/highscore
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Im1lZW0iLCJleHAiOjIwMDAwMDAwMDB9._hr413daLiZyLba-Ry8F00QDwzKJ6CbPmxi4wxcwfIc
+

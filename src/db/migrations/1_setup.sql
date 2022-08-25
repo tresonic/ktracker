@@ -8,5 +8,5 @@ create table if not exists data (
     id INTEGER primary key,
     username TEXT not null,
     time DATETIME not null default current_timestamp,
-    meters unsigned BIG INT not null
+    meters unsigned FLOAT not null
 );

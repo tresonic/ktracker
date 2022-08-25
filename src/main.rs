@@ -6,13 +6,15 @@
 
 use auth::Claims;
 use axum::{
-    routing::{get, post}, Router, Extension,
+    routing::{get, post}, Router, Extension, http::Method,
 };
+use headers::HeaderValue;
 use tokio::signal;
+use tower_http::cors::{CorsLayer, Any};
 use std::{net::SocketAddr};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-use crate::http::{error::AuthError, authorize::authorize, create_user::create_user, get_meters::get_meters, create_entry::create_entry};
+use crate::http::{error::AuthError, authorize::authorize, create_user::create_user, get_meters::get_meters, create_entry::create_entry, highscore::highscore};
 use crate::db::database as daba;
 
 mod auth;
@@ -23,12 +25,14 @@ mod db;
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::EnvFilter::new(
-            std::env::var("RUST_LOG").unwrap_or_else(|_| "example_jwt=debug".into()),
-        ))
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+    // tracing_subscriber::registry()
+    //     .with(tracing_subscriber::EnvFilter::new(
+    //         std::env::var("RUST_LOG").unwrap_or_else(|_| "example_jwt=debug".into()),
+    //     ))
+    //     .with(tracing_subscriber::fmt::layer())
+    //     .init();
+
+    tracing_subscriber::fmt::init();
 
     let db = daba::init_db().await;
     
@@ -37,7 +41,21 @@ async fn main() {
         .route("/authorize", post(authorize).layer(Extension(db.clone())))
         .route("/create_user", post(create_user).layer(Extension(db.clone())))
         .route("/get_meters", get(get_meters).layer(Extension(db.clone())))
-        .route("/create_entry", post(create_entry).layer(Extension(db.clone())));
+        .route("/create_entry", post(create_entry).layer(Extension(db.clone())))
+        .route("/highscore", get(highscore).layer(Extension(db.clone())))
+        .layer(
+            // see https://docs.rs/tower-http/latest/tower_http/cors/index.html
+            // for more details
+            //
+            // pay attention that for some request types like posting content-type: application/json
+            // it is required to add ".allow_headers([http::header::CONTENT_TYPE])"
+            // or see this issue https://github.com/tokio-rs/axum/issues/849
+            CorsLayer::new()
+                // .allow_origin("http://0.0.0.0:8080".parse::<HeaderValue>().unwrap())
+                .allow_origin(Any)
+                .allow_methods([Method::GET, Method::POST])
+                .allow_headers(vec![axum::http::header::CONTENT_TYPE, axum::http::header::AUTHORIZATION]));
+        // .merge(axum_extra::routing::SpaRouter::new("/assets", "./frontend/build"));
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
     tracing::debug!("listening on {}", addr);

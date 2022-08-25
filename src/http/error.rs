@@ -12,8 +12,8 @@ pub enum AuthError {
 impl IntoResponse for AuthError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
-            AuthError::WrongCredentials => (StatusCode::UNAUTHORIZED, "Wrong credentials"),
-            AuthError::MissingCredentials => (StatusCode::BAD_REQUEST, "Missing credentials"),
+            AuthError::WrongCredentials => (StatusCode::OK, "Wrong credentials"),
+            AuthError::MissingCredentials => (StatusCode::OK, "Missing credentials"),
             AuthError::TokenCreation => (StatusCode::INTERNAL_SERVER_ERROR, "Token creation error"),
             AuthError::InvalidToken => (StatusCode::BAD_REQUEST, "Invalid token"),
         };
@@ -35,11 +35,11 @@ pub enum UserCreateError {
 impl IntoResponse for UserCreateError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
-            UserCreateError::UsernameTooShort => (StatusCode::NOT_ACCEPTABLE, "Username is too short"),
-            UserCreateError::PasswordTooShort => (StatusCode::NOT_ACCEPTABLE, "Password is too short"),
-            UserCreateError::PasswortNotGoodEnough => (StatusCode::NOT_ACCEPTABLE, "Password is too bad"),
-            UserCreateError::UsernameTaken => (StatusCode::NOT_ACCEPTABLE, "Username is already taken"),
-            UserCreateError::UsernameBad => (StatusCode::NOT_ACCEPTABLE, "Bad Username"),
+            UserCreateError::UsernameTooShort => (StatusCode::OK, "Username is too short"),
+            UserCreateError::PasswordTooShort => (StatusCode::OK, "Password is too short"),
+            UserCreateError::PasswortNotGoodEnough => (StatusCode::OK, "Password is too bad"),
+            UserCreateError::UsernameTaken => (StatusCode::OK, "Username is already taken"),
+            UserCreateError::UsernameBad => (StatusCode::OK, "Bad Username"),
         };
         let body = Json(json!({
             "error": error_message,
