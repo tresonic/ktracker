@@ -4,17 +4,16 @@
 //! e.g. JWT_SECRET=secret cargo run
 
 
-use auth::Claims;
 use axum::{
     routing::{get, post}, Router, Extension, http::Method,
 };
-use headers::HeaderValue;
+use axum_server::tls_rustls::RustlsConfig;
 use tokio::signal;
 use tower_http::cors::{CorsLayer, Any};
-use std::{net::SocketAddr};
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use std::net::SocketAddr;
+use structopt::StructOpt;
 
-use crate::http::{error::AuthError, authorize::authorize, create_user::create_user, get_meters::get_meters, create_entry::create_entry, highscore::highscore};
+use crate::http::{authorize::authorize, create_user::create_user, get_meters::get_meters, create_entry::create_entry, highscore::highscore};
 use crate::db::database as daba;
 
 mod auth;
@@ -22,17 +21,17 @@ mod models;
 mod http;
 mod db;
 
+#[derive(StructOpt, Debug)]
+#[structopt(name = "ktracker")]
+struct Options {
+    #[structopt(short, long)]
+    deployed: bool,
+}
+
 
 #[tokio::main]
 async fn main() {
-    // tracing_subscriber::registry()
-    //     .with(tracing_subscriber::EnvFilter::new(
-    //         std::env::var("RUST_LOG").unwrap_or_else(|_| "example_jwt=debug".into()),
-    //     ))
-    //     .with(tracing_subscriber::fmt::layer())
-    //     .init();
-
-    tracing_subscriber::fmt::init();
+    let opt = Options::from_args();
 
     let db = daba::init_db().await;
     
@@ -44,35 +43,29 @@ async fn main() {
         .route("/create_entry", post(create_entry).layer(Extension(db.clone())))
         .route("/highscore", get(highscore).layer(Extension(db.clone())))
         .layer(
-            // see https://docs.rs/tower-http/latest/tower_http/cors/index.html
-            // for more details
-            //
-            // pay attention that for some request types like posting content-type: application/json
-            // it is required to add ".allow_headers([http::header::CONTENT_TYPE])"
-            // or see this issue https://github.com/tokio-rs/axum/issues/849
             CorsLayer::new()
-                // .allow_origin("http://0.0.0.0:8080".parse::<HeaderValue>().unwrap())
                 .allow_origin(Any)
                 .allow_methods([Method::GET, Method::POST])
-                .allow_headers(vec![axum::http::header::CONTENT_TYPE, axum::http::header::AUTHORIZATION]));
-        // .merge(axum_extra::routing::SpaRouter::new("/assets", "./frontend/build"));
+                .allow_headers(vec![axum::http::header::CONTENT_TYPE, axum::http::header::AUTHORIZATION]))
+        .merge(axum_extra::routing::SpaRouter::new("/assets", "./frontend/"));
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
-    tracing::debug!("listening on {}", addr);
 
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .with_graceful_shutdown(shutdown_signal())
-        .await
-        .unwrap();
-}
-
-async fn protected(claims: Claims) -> Result<String, AuthError> {
-    // Send the protected data to the user
-    Ok(format!(
-        "Welcome to the protected area :)\nYour data:\n{}",
-        claims
-    ))
+    if !opt.deployed {
+        tracing::debug!("starting in dev mode");
+        let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+        axum::Server::bind(&addr)
+            .serve(app.into_make_service())
+            .with_graceful_shutdown(shutdown_signal())
+            .await
+            .unwrap();
+    } else {
+        let addr = SocketAddr::from(([0, 0, 0, 0], 443));
+        let config = RustlsConfig::from_pem_file("/etc/letsencrypt/live/quack-nak.de/fullchain.pem", "/etc/letsencrypt/live/quack-nak.de/key.pem").await.unwrap();
+        axum_server::bind_rustls(addr, config)
+            .serve(app.into_make_service())
+            .await
+            .unwrap();
+    }
 }
 
 async fn shutdown_signal() {

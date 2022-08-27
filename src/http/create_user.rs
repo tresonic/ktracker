@@ -1,6 +1,6 @@
 use axum::{Json, Extension, response::{IntoResponse, Response}, http::StatusCode};
 
-use crate::{http::error::UserCreateError, models::CreateUserPayload, db::database::Database};
+use crate::{models::CreateUserPayload, db::database::Database};
 
 pub async fn create_user(Json(payload): Json<CreateUserPayload>, Extension(db): Extension<Database>,) -> Response {
     // match db.create_user(payload).await {

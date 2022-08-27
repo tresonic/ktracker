@@ -56,6 +56,10 @@ impl Database {
             return Some(UserCreateError::UsernameBad);
         }
 
+        if !user.pass.chars().into_iter().any(|c| c.is_ascii_digit()) {
+            return Some(UserCreateError::PasswortNotGoodEnough);
+        }
+
         let hash = hash(user.pass, bcrypt::DEFAULT_COST).unwrap();
         sqlx::query("INSERT INTO users (username, email, hash) VALUES (?, ?, ?)")
             .bind(user.username)
