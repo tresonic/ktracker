@@ -60,7 +60,7 @@ async fn main() {
             .unwrap();
     } else {
         let addr = SocketAddr::from(([0, 0, 0, 0], 443));
-        let config = RustlsConfig::from_pem_file("/etc/letsencrypt/live/quack-nak.de/fullchain.pem", "/etc/letsencrypt/live/quack-nak.de/key.pem").await.unwrap();
+        let config = RustlsConfig::from_pem_file("/etc/letsencrypt/live/quack-nak.de/fullchain.pem", "/etc/letsencrypt/live/quack-nak.de/privkey.pem").await.unwrap();
         axum_server::bind_rustls(addr, config)
             .serve(app.into_make_service())
             .await
