@@ -35,9 +35,22 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Build Artifact
+      - name: Build Backend
         run: |
           cargo build --release
+          
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+          cd ..
+          
+      - name: Package Application
+        run: |
+          zip -j ktracker.zip target/release/ktracker setup.sh
+          (cd frontend; zip -r ../ktracker.zip build)
+          7z rn ktracker.zip build frontend
           
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -46,4 +59,4 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            ./target/release/ktracker
+            ktracker.zip
