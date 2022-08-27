@@ -59,7 +59,7 @@ export default function Overview() {
                                     <button class="button" >Save</button>
                                 </div>
                             </div> */}
-                            <div class="field is-horizontal has-addons" style="width: 100%;">
+                            <div class="container field is-horizontal has-addons">
                                 <div class="control">
                                     <input class="input is-success" type="number" placeholder="Distanz in Kilometern" value={input} onInput={onInput} />
                                 </div>
