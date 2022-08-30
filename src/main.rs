@@ -8,15 +8,12 @@ use axum::{
     routing::{get, get_service, post},
     Extension, Router,
 };
-use axum_server::tls_rustls::RustlsConfig;
 use std::net::SocketAddr;
 use structopt::StructOpt;
 use tokio::signal;
-use tower::ServiceBuilder;
 use tower_http::{
     cors::{Any, CorsLayer},
     services::{ServeDir, ServeFile},
-    trace::TraceLayer,
 };
 
 use crate::db::database as daba;
@@ -35,6 +32,8 @@ mod models;
 struct Options {
     #[structopt(short, long)]
     deployed: bool,
+    #[structopt(short, long)]
+    no_frontend: bool,
 }
 
 #[tokio::main]
@@ -43,10 +42,19 @@ async fn main() {
 
     let db = daba::init_db().await;
 
-    if !opt.deployed {
-        tracing::debug!("starting in dev mode");
-        let api_routes: Router = Router::new()
-            // .route("/protected", get(protected).layer(Extension(db.clone())))
+    let frontend_path = if !opt.deployed {
+        "./frontend/build/"
+    } else {
+        "./frontend/"
+    };
+
+    let addr = if !opt.deployed {
+        SocketAddr::from(([0, 0, 0, 0], 3000))
+    } else {
+        SocketAddr::from(([0, 0, 0, 0], 443))
+    };
+
+    let api_routes: Router = Router::new()
             .route(
                 "/api/authorize",
                 post(authorize).layer(Extension(db.clone())),
@@ -77,8 +85,6 @@ async fn main() {
                     ]),
             );
 
-        let frontend_path = "./frontend/build/";
-
         let index = frontend_path.to_string() + "index.html";
         let spa_service = get_service(ServeFile::new(index)).handle_error(|_| async move {
             (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error")
@@ -95,79 +101,17 @@ async fn main() {
                 }),
             );
 
-        let app = Router::new().merge(api_routes).merge(frontend_routes);
+        let app = if opt.no_frontend {
+            api_routes
+        } else {
+            Router::new().merge(api_routes).merge(frontend_routes)
+        };
 
-        let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
         axum::Server::bind(&addr)
             .serve(app.into_make_service())
             .with_graceful_shutdown(shutdown_signal())
             .await
             .unwrap();
-    } else {
-        let api_routes: Router = Router::new()
-            // .route("/protected", get(protected).layer(Extension(db.clone())))
-            .route(
-                "/api/authorize",
-                post(authorize).layer(Extension(db.clone())),
-            )
-            .route(
-                "/api/create_user",
-                post(create_user).layer(Extension(db.clone())),
-            )
-            .route(
-                "/api/get_meters",
-                get(get_meters).layer(Extension(db.clone())),
-            )
-            .route(
-                "/api/create_entry",
-                post(create_entry).layer(Extension(db.clone())),
-            )
-            .route(
-                "/api/highscore",
-                get(highscore).layer(Extension(db.clone())),
-            )
-            .layer(
-                CorsLayer::new()
-                    .allow_origin(Any)
-                    .allow_methods([Method::GET, Method::POST])
-                    .allow_headers(vec![
-                        axum::http::header::CONTENT_TYPE,
-                        axum::http::header::AUTHORIZATION,
-                    ]),
-            );
-
-        let frontend_path = "./frontend/";
-
-        let index = frontend_path.to_string() + "index.html";
-        let spa_service = get_service(ServeFile::new(index)).handle_error(|_| async move {
-            (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error")
-        });
-        // build our application with a route
-        let frontend_routes = Router::new()
-            .route("/", spa_service.clone())
-            .route("/login", spa_service.clone())
-            .route("/register", spa_service.clone())
-            .route("/highscore", spa_service.clone())
-            .fallback(
-                get_service(ServeDir::new(frontend_path)).handle_error(|_| async move {
-                    (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error")
-                }),
-            );
-
-        let app = Router::new().merge(api_routes).merge(frontend_routes);
-
-        let addr = SocketAddr::from(([0, 0, 0, 0], 443));
-        let config = RustlsConfig::from_pem_file(
-            "/etc/letsencrypt/live/quack-nak.de/fullchain.pem",
-            "/etc/letsencrypt/live/quack-nak.de/privkey.pem",
-        )
-        .await
-        .unwrap();
-        axum_server::bind_rustls(addr, config)
-            .serve(app.into_make_service())
-            .await
-            .unwrap();
-    }
 }
 
 async fn shutdown_signal() {

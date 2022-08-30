@@ -39,14 +39,14 @@ export default function Login() {
                     <div class="field">
                         <label class="label">Benutzername</label>
                         <div class="control">
-                            <input class="input is-success" type="text" value={username} onInput={onUsernameInput}/>
+                            <input class="input is-success" type="text" value={username} onInput={onUsernameInput} />
                         </div>
                     </div>
 
                     <div class="field">
-                    <label class="label">Passwort</label>
+                        <label class="label">Passwort</label>
                         <p class="control">
-                            <input class="input is-dark" type="password" value={pass} onInput={onPassInput}/>
+                            <input class="input is-dark" type="password" value={pass} onInput={onPassInput} />
                         </p>
                     </div>
                     <div class="has-text-danger">{errorMsg}</div>
