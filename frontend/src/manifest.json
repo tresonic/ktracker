@@ -1,6 +1,6 @@
 {
-  "name": "frontend",
-  "short_name": "frontend",
+  "name": "kTracker",
+  "short_name": "kTracker",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
@@ -8,9 +8,9 @@
   "theme_color": "#673ab8",
   "icons": [
     {
-      "src": "/assets/icon.png",
+      "src": "/assets/dav.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "450x450"
     }
   ]
 }
