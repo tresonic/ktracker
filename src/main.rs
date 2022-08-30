@@ -5,7 +5,7 @@
 
 use axum::{
     http::{Method, StatusCode},
-    routing::{get, post, get_service},
+    routing::{get, get_service, post},
     Extension, Router,
 };
 use axum_server::tls_rustls::RustlsConfig;
@@ -15,7 +15,8 @@ use tokio::signal;
 use tower::ServiceBuilder;
 use tower_http::{
     cors::{Any, CorsLayer},
-    trace::TraceLayer, services::ServeDir,
+    services::{ServeDir, ServeFile},
+    trace::TraceLayer,
 };
 
 use crate::db::database as daba;
@@ -44,19 +45,28 @@ async fn main() {
 
     if !opt.deployed {
         tracing::debug!("starting in dev mode");
-        let app = Router::new()
+        let api_routes: Router = Router::new()
             // .route("/protected", get(protected).layer(Extension(db.clone())))
-            .route("/authorize", post(authorize).layer(Extension(db.clone())))
             .route(
-                "/create_user",
+                "/api/authorize",
+                post(authorize).layer(Extension(db.clone())),
+            )
+            .route(
+                "/api/create_user",
                 post(create_user).layer(Extension(db.clone())),
             )
-            .route("/get_meters", get(get_meters).layer(Extension(db.clone())))
             .route(
-                "/create_entry",
+                "/api/get_meters",
+                get(get_meters).layer(Extension(db.clone())),
+            )
+            .route(
+                "/api/create_entry",
                 post(create_entry).layer(Extension(db.clone())),
             )
-            .route("/highscore", get(highscore).layer(Extension(db.clone())))
+            .route(
+                "/api/highscore",
+                get(highscore).layer(Extension(db.clone())),
+            )
             .layer(
                 CorsLayer::new()
                     .allow_origin(Any)
@@ -65,16 +75,28 @@ async fn main() {
                         axum::http::header::CONTENT_TYPE,
                         axum::http::header::AUTHORIZATION,
                     ]),
-            )
+            );
+
+        let frontend_path = "./frontend/build/";
+
+        let index = frontend_path.to_string() + "index.html";
+        let spa_service = get_service(ServeFile::new(index)).handle_error(|_| async move {
+            (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error")
+        });
+        // build our application with a route
+        let frontend_routes = Router::new()
+            .route("/", spa_service.clone())
+            .route("/login", spa_service.clone())
+            .route("/register", spa_service.clone())
+            .route("/highscore", spa_service.clone())
             .fallback(
-                get_service(ServeDir::new("./frontend/build")).handle_error(|_| async move {
-                    (StatusCode::INTERNAL_SERVER_ERROR, "internal server error")
+                get_service(ServeDir::new(frontend_path)).handle_error(|_| async move {
+                    (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error")
                 }),
             );
-        // .merge(axum_extra::routing::SpaRouter::new(
-        //     "/assets",
-        //     "./frontend/build",
-        // ));
+
+        let app = Router::new().merge(api_routes).merge(frontend_routes);
+
         let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
         axum::Server::bind(&addr)
             .serve(app.into_make_service())
@@ -82,19 +104,28 @@ async fn main() {
             .await
             .unwrap();
     } else {
-        let app = Router::new()
+        let api_routes: Router = Router::new()
             // .route("/protected", get(protected).layer(Extension(db.clone())))
-            .route("/authorize", post(authorize).layer(Extension(db.clone())))
             .route(
-                "/create_user",
+                "/api/authorize",
+                post(authorize).layer(Extension(db.clone())),
+            )
+            .route(
+                "/api/create_user",
                 post(create_user).layer(Extension(db.clone())),
             )
-            .route("/get_meters", get(get_meters).layer(Extension(db.clone())))
             .route(
-                "/create_entry",
+                "/api/get_meters",
+                get(get_meters).layer(Extension(db.clone())),
+            )
+            .route(
+                "/api/create_entry",
                 post(create_entry).layer(Extension(db.clone())),
             )
-            .route("/highscore", get(highscore).layer(Extension(db.clone())))
+            .route(
+                "/api/highscore",
+                get(highscore).layer(Extension(db.clone())),
+            )
             .layer(
                 CorsLayer::new()
                     .allow_origin(Any)
@@ -103,12 +134,28 @@ async fn main() {
                         axum::http::header::CONTENT_TYPE,
                         axum::http::header::AUTHORIZATION,
                     ]),
-            )
+            );
+
+        let frontend_path = "./frontend/";
+
+        let index = frontend_path.to_string() + "index.html";
+        let spa_service = get_service(ServeFile::new(index)).handle_error(|_| async move {
+            (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error")
+        });
+        // build our application with a route
+        let frontend_routes = Router::new()
+            .route("/", spa_service.clone())
+            .route("/login", spa_service.clone())
+            .route("/register", spa_service.clone())
+            .route("/highscore", spa_service.clone())
             .fallback(
-                get_service(ServeDir::new("./frontend")).handle_error(|_| async move {
-                    (StatusCode::INTERNAL_SERVER_ERROR, "internal server error")
+                get_service(ServeDir::new(frontend_path)).handle_error(|_| async move {
+                    (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error")
                 }),
             );
+
+        let app = Router::new().merge(api_routes).merge(frontend_routes);
+
         let addr = SocketAddr::from(([0, 0, 0, 0], 443));
         let config = RustlsConfig::from_pem_file(
             "/etc/letsencrypt/live/quack-nak.de/fullchain.pem",

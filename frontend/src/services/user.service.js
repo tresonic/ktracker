@@ -2,7 +2,7 @@ import axios from 'axios';
 import authHeader from './auth-header';
 // if (typeof window !== "undefined") {
 // const API_URL = "http://" + window.location.hostname + ":3000/";
-const API_URL = "/";
+const API_URL = "/api/";
 //  }
 
 class UserService {

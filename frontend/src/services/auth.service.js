@@ -1,7 +1,7 @@
 import axios from "axios";
 // if (typeof window !== "undefined") {
 // const API_URL = "http://" + window.location.hostname + ":3000/";
-const API_URL = "/";
+const API_URL = "/api/";
 // }
 
 class AuthService {
