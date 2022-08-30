@@ -7,6 +7,7 @@ import Highscore from './components/highscore';
 import Login from './components/login';
 import AuthenticatedRoute from './components/authenticatedRoute';
 import Register from './components/register';
+import Error404 from './components/Error404';
 
 export default function App() {
 	return (
@@ -19,6 +20,8 @@ export default function App() {
 
 				<Route path="/login" component={Login} />
 				<Route path="/register" component={Register} />
+
+				<Route type="404" default component={Error404}/>
 			</Router>
 		</div>
 	);

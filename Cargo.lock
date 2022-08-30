@@ -167,9 +167,9 @@ dependencies = [
 
 [[package]]
 name = "axum-server"
-version = "0.3.3"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9cfd9dbe28ebde5c0460067ea27c6f3b1d514b699c4e0a5aab0fb63e452a8a8"
+checksum = "87ba6170b61f7b086609dabcae68d2e07352539c6ef04a7c82980bdfa01a159d"
 dependencies = [
  "arc-swap",
  "bytes",
@@ -179,7 +179,7 @@ dependencies = [
  "hyper",
  "pin-project-lite",
  "rustls",
- "rustls-pemfile 0.2.1",
+ "rustls-pemfile",
  "tokio",
  "tokio-rustls",
  "tower-service",
@@ -1207,15 +1207,6 @@ dependencies = [
 
 [[package]]
 name = "rustls-pemfile"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5eebeaeb360c87bfb72e84abdb3447159c0eaececf1bef2aecd65a8be949d1c9"
-dependencies = [
- "base64",
-]
-
-[[package]]
-name = "rustls-pemfile"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0864aeff53f8c05aa08d86e5ef839d3dfcf07aeba2db32f12db0ef716e87bd55"
@@ -1435,7 +1426,7 @@ dependencies = [
  "paste",
  "percent-encoding",
  "rustls",
- "rustls-pemfile 1.0.1",
+ "rustls-pemfile",
  "sha2",
  "smallvec",
  "sqlformat",

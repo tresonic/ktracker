@@ -1,8 +1,9 @@
 import axios from 'axios';
 import authHeader from './auth-header';
-if (typeof window !== "undefined") {
-  const API_URL = "http://" + window.location.hostname + ":3000/";
-  }
+// if (typeof window !== "undefined") {
+// const API_URL = "http://" + window.location.hostname + ":3000/";
+const API_URL = "/";
+//  }
 
 class UserService {
   getHighscore() {
@@ -13,7 +14,7 @@ class UserService {
     return axios.get(API_URL + 'get_meters', { headers: authHeader() });
   }
   createEntry(meters) {
-    return axios.post(API_URL + 'create_entry', {meters: meters}, { headers: authHeader() });
+    return axios.post(API_URL + 'create_entry', { meters: meters }, { headers: authHeader() });
   }
 }
 export default new UserService();

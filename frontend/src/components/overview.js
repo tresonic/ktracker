@@ -27,8 +27,13 @@ export default function Overview() {
     }
 
     const onSave = async e => {
+        const num = Math.round(parseFloat(input) * 100) / 100;
+        if (num <= 0 || !num) {
+            setInput("");
+            return;
+        }
         document.querySelector("#save_button").classList.add("is-loading");
-        const res = await userService.createEntry(Math.round(parseFloat(input) * 100) / 100);
+        const res = await userService.createEntry(num);
         if (res.error) {
             setErrorMsg(res.error);
         } else {
@@ -44,32 +49,26 @@ export default function Overview() {
     return (
         <div class="container mt-6">
             <div class="columns is-centered">
-                <div class="column">
+                <div class="column mx-auto">
+                    <div class="has-text-centered">
+                    {/* <label>Neuer Eintrag</label> */}
+                    <div class="field is-horizontal is-grouped is-grouped-centered">
+                        <div class="control">
+                            <input class="input is-success" type="number" placeholder="Distanz in Kilometern" min="0" value={input} onInput={onInput}/>
+                        </div>
+                        <div class="control">
+                            <a id="save_button" class="button is-info" onClick={onSave}>
+                                Neuer Eintrag
+                            </a>
+                        </div>
+                    </div>
+                    
 
+                    <div class="has-text-danger pb-3">{errorMsg}</div>
+                    </div>
 
                     <table class="table mx-auto">
                         <thead>
-                            <label>Neuer Eintrag</label>
-                            {/* <div class="columns pb-6">
-
-                                <div class="column is-three-quarters">
-                                    <input class="input is-success" type="number" placeholder="Distanz" value={input} onInput={onInput} />
-                                </div>
-                                <div class="column">
-                                    <button class="button" >Save</button>
-                                </div>
-                            </div> */}
-                            <div class="container field is-horizontal has-addons">
-                                <div class="control">
-                                    <input class="input is-success" type="number" placeholder="Distanz in Kilometern" value={input} onInput={onInput} />
-                                </div>
-                                <div class="control">
-                                    <a id="save_button" class="button is-info" onClick={onSave}>
-                                        Save
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="has-text-danger pb-3">{errorMsg}</div>
                             <tr>
                                 <th>Zeit</th>
                                 <th>Kilometer</th>
