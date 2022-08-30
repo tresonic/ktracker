@@ -7,10 +7,6 @@ export default function Highscore() {
 
 
     useEffect(async () => {
-        // const res = await userService.getHighscore();
-        // console.log(res.data.entries);
-        // setHighscore(res.data.entries);
-        // console.log(highscore);
         userService.getHighscore().then(res => {
             setHighscore(res.data.entries);
             setLoading(false);
@@ -18,10 +14,6 @@ export default function Highscore() {
     }, []);
 
     console.log(highscore);
-
-    if (loading) {
-        return (<div>Highscore loading...</div>)
-    }
 
     return (
         <div class="container mt-6">
@@ -45,7 +37,6 @@ export default function Highscore() {
                             );
                         })}
                     </tbody>
-                    {/* <div>{highscore[0].username}</div> */}
                 </table>
             </div>
         </div>

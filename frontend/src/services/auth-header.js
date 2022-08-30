@@ -1,7 +1,7 @@
 export default function authHeader() {
     let user = null;
     
-    console.log("auth-header");
+    // console.log("auth-header");
 
     if(typeof window !== "undefined") {
         // console.log("auth-header load");

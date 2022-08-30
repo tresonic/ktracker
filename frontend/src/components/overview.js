@@ -1,5 +1,4 @@
 import { useEffect, useState } from "preact/hooks";
-import authService from "../services/auth.service";
 import userService from "../services/user.service";
 
 export default function Overview() {
@@ -11,12 +10,7 @@ export default function Overview() {
 
 
     useEffect(async () => {
-        // const res = await userService.getHighscore();
-        // console.log(res.data.entries);
-        // setHighscore(res.data.entries);
-        // console.log(highscore);
         userService.getMeters().then(res => {
-            console.log(res);
             setOverview(res.data.entries);
             setLoading(false);
         });
@@ -42,16 +36,11 @@ export default function Overview() {
         document.querySelector("#save_button").classList.remove("is-loading");
     }
 
-    // if (loading) {
-    //     return (<div>Overview loading...</div>)
-    // }
-
     return (
         <div class="container mt-6">
             <div class="columns is-centered">
                 <div class="column mx-auto">
                     <div class="has-text-centered">
-                    {/* <label>Neuer Eintrag</label> */}
                     <div class="field is-horizontal is-grouped is-grouped-centered">
                         <div class="control">
                             <input class="input is-success" type="number" placeholder="Distanz in Kilometern" min="0" value={input} onInput={onInput}/>
@@ -84,7 +73,6 @@ export default function Overview() {
                                 );
                             })}
                         </tbody>
-                        {/* <div>{highscore[0].username}</div> */}
                     </table>
                 </div>
             </div>
