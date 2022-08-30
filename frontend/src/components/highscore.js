@@ -29,14 +29,16 @@ export default function Highscore() {
                 <table class="table mx-auto">
                     <thead>
                         <tr>
+                            <th>Platz</th>
                             <th>Benutzername</th>
                             <th>Kilometer</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {highscore.length > 0 && highscore.map(entry => {
+                        {highscore.length > 0 && highscore.map((entry, idx) => {
                             return (
                                 <tr>
+                                    <td>{idx+1}</td>
                                     <td>{entry.username}</td>
                                     <td>{entry.meters}</td>
                                 </tr>

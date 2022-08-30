@@ -8,7 +8,6 @@ const API_URL = "/api/";
 class UserService {
   getHighscore() {
     return axios.get(API_URL + 'highscore', { headers: authHeader() });
-    // return axios.get(API_URL + 'highscore', {}, { headers: authHeader() });
   }
   getMeters() {
     return axios.get(API_URL + 'get_meters', { headers: authHeader() });
