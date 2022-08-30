@@ -52,7 +52,7 @@ export default function Login() {
                     <div class="has-text-danger">{errorMsg}</div>
                 </section>
                 <footer class="modal-card-foot">
-                    <button id="login_button" class="button is-success" onClick={onLogin}>Login</button>
+                    <button id="login_button" class="button is-success" onClick={onLogin} type="submit">Login</button>
                     <Link class="button" href="/register">Registrieren</Link>
                 </footer>
             </div>
