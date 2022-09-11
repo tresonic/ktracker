@@ -1,13 +1,15 @@
 import axios from "axios";
+import { apiUrl } from "./api_url";
 // if (typeof window !== "undefined") {
 // const API_URL = "http://" + window.location.hostname + ":3000/";
-const API_URL = "/api/";
+
 // }
 
 class AuthService {
   login(username, pass) {
+    console.log(apiUrl());
     return axios
-      .post(API_URL + "authorize", {
+      .post(apiUrl() + "authorize", {
         username,
         pass
       })
@@ -31,7 +33,7 @@ class AuthService {
   }
 
   register(username, email, pass) {
-    return axios.post(API_URL + "create_user", {
+    return axios.post(apiUrl() + "create_user", {
       username,
       pass,
       email
