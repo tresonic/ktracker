@@ -23,7 +23,7 @@ export default function Header() {
                 <ul>
                     <li><Link class="navitem" href="/highscore">Highscore</Link></li>
                     <li><Link class="navitem" href="/">Über</Link></li>
-                    <li><div class="navitem" onClick={onLogout}>Logout</div></li>
+                    <li><div class="navitem" onClick={onLogout}>Abmelden</div></li>
                 </ul>
                 {/* <div class="navbar-brand">
                 <Link className="navbar-item" href="/">kTracker</Link>
