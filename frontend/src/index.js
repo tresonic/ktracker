@@ -12,19 +12,21 @@ import Footer from './components/footer';
 
 export default function App() {
 	return (
-		<div class="">
+		<>
 			<Header />
-			<Router>
+			<div class="content">
+				<Router>
 
-				<AuthenticatedRoute path="/" component={Overview} />
-				<AuthenticatedRoute path="/highscore" component={Highscore} />
+					<AuthenticatedRoute path="/" component={Overview} />
+					<AuthenticatedRoute path="/highscore" component={Highscore} />
 
-				<Route path="/login" component={Login} />
-				<Route path="/register" component={Register} />
+					<Route path="/login" component={Login} />
+					<Route path="/register" component={Register} />
 
-				<Route type="404" default component={Error404}/>
-			</Router>
+					<Route type="404" default component={Error404} />
+				</Router>
+			</div>
 			<Footer />
-		</div>
+		</>
 	);
 }

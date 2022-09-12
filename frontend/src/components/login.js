@@ -1,3 +1,5 @@
+import '../logreg'
+
 import { Link, route } from "preact-router";
 import { useState } from "preact/hooks";
 import authService from "../services/auth.service";
@@ -29,32 +31,21 @@ export default function Login() {
     }
 
     return (
-        <div class="modal is-active">
-            <div class="modal-background"></div>
-            <div class="modal-card">
-                <header class="modal-card-head">
-                    <p class="modal-card-title">Login</p>
-                </header>
-                <section class="modal-card-body">
-                    <div class="field">
-                        <label class="label">Benutzername</label>
-                        <div class="control">
-                            <input class="input is-success" type="text" value={username} onInput={onUsernameInput} />
-                        </div>
-                    </div>
+        <div class="logreg">
+            <h3>Anmeldung</h3>
 
-                    <div class="field">
-                        <label class="label">Passwort</label>
-                        <p class="control">
-                            <input class="input is-dark" type="password" value={pass} onInput={onPassInput} />
-                        </p>
-                    </div>
-                    <div class="has-text-danger">{errorMsg}</div>
-                </section>
-                <footer class="modal-card-foot">
-                    <button id="login_button" class="button is-success" onClick={onLogin} type="submit">Login</button>
-                    <Link class="button" href="/register">Registrieren</Link>
-                </footer>
+            <div class="field">
+                <input class="input" type="text" placeholder="Benutzername" value={username} onInput={onUsernameInput} />
+            </div>
+
+            <div class="field">
+                <input class="input" type="password" placeholder="Passwort" value={pass} onInput={onPassInput} />
+            </div>
+            <div class="has-text-danger">{errorMsg}</div>
+
+            <button id="login_button" class="button is-success" onClick={onLogin} type="submit">Anmelden</button>
+            <div>
+                Noch nicht registriert? <Link class="button" href="/register">Registrieren</Link>
             </div>
         </div>
     );

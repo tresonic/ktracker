@@ -1,0 +1,58 @@
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+nav {
+    width: 75%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .5rem;
+    background: #5c6058;
+    border-radius: 0 0 8px 8px;
+}
+
+.brandcombo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.brand a {
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+ul {
+    display: flex;
+    flex-direction: row;
+}
+
+li {
+    list-style-type: none;
+    margin-left: 1rem;
+}
+
+.navitem {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.icon {
+    width: 2rem;
+}
+
+@media screen and (max-width: 480px) {
+    nav {
+        width: 100%;
+    }
+}

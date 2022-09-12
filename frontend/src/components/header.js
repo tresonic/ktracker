@@ -1,3 +1,5 @@
+import '../header'
+
 import { Link, route } from "preact-router";
 import authService from "../services/auth.service";
 
@@ -14,8 +16,16 @@ export default function Header() {
     }
 
     return (
-        <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
-            <div class="navbar-brand">
+        <header>
+
+            <nav role="navigation" aria-label="main navigation">
+                <div class="brand"><Link class="brandcombo" href="/"><img class="icon" src="assets/favicon.ico" alt="icon"/>&nbsp;kTracker</Link></div>
+                <ul>
+                    <li><Link class="navitem" href="/highscore">Highscore</Link></li>
+                    <li><Link class="navitem" href="/">Über</Link></li>
+                    <li><div class="navitem" onClick={onLogout}>Logout</div></li>
+                </ul>
+                {/* <div class="navbar-brand">
                 <Link className="navbar-item" href="/">kTracker</Link>
 
                 <a id="menu-button" role="button" class="navbar-burger" onClick={onMenuButton} aria-label="menu" aria-expanded="false" data-target="navbar">
@@ -33,7 +43,8 @@ export default function Header() {
                 <div class="navbar-end">
                     <div class="navbar-item"><button class="button is-primary" onClick={onLogout}>Logout</button></div>
                 </div>
-            </div>
-        </nav>
+            </div> */}
+            </nav>
+        </header>
     );
 }
