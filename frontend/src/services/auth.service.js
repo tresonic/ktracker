@@ -52,6 +52,10 @@ class AuthService {
       return null;
     }
   }
+
+  isLoggedIn() {
+    return this.getCurrentUser() != null;
+  }
 }
 
 export default new AuthService();

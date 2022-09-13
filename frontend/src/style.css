@@ -9,6 +9,8 @@ body {
 .content {
     margin: 5rem auto 2rem auto;
     width: 75vw;
+    display: flex;
+    justify-content: center;
 }
 
 input {

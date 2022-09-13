@@ -9,17 +9,20 @@ import AuthenticatedRoute from './components/authenticatedRoute';
 import Register from './components/register';
 import Error404 from './components/Error404';
 import Footer from './components/footer';
+import About from './components/about';
+import authService from './services/auth.service';
 
 export default function App() {
 	return (
 		<>
-			<Header />
+			<Header loggedIn={authService.isLoggedIn()} />
 			<div class="content">
 				<Router>
 
-					<AuthenticatedRoute path="/" component={Overview} />
+					<AuthenticatedRoute path="/overview" component={Overview} />
 					<AuthenticatedRoute path="/highscore" component={Highscore} />
 
+					<Route path="/" component={About} />
 					<Route path="/login" component={Login} />
 					<Route path="/register" component={Register} />
 

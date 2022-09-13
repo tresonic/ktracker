@@ -25,7 +25,9 @@ export default function Login() {
             setErrorMsg(res.error);
             document.querySelector("#login_button").classList.remove("is-loading");
         } else {
-            route("/", true);
+            route("/overview", true);
+            var popStateEvent = new PopStateEvent('popstate', { state: null });
+            dispatchEvent(popStateEvent);
         }
         // console.log(res);
     }
