@@ -8,6 +8,7 @@ use axum::{
     routing::{get, get_service, post},
     Extension, Router,
 };
+use axum_server::tls_rustls::RustlsConfig;
 use std::net::SocketAddr;
 use structopt::StructOpt;
 use tokio::signal;
@@ -55,63 +56,77 @@ async fn main() {
     };
 
     let api_routes: Router = Router::new()
-            .route(
-                "/api/authorize",
-                post(authorize).layer(Extension(db.clone())),
-            )
-            .route(
-                "/api/create_user",
-                post(create_user).layer(Extension(db.clone())),
-            )
-            .route(
-                "/api/get_meters",
-                get(get_meters).layer(Extension(db.clone())),
-            )
-            .route(
-                "/api/create_entry",
-                post(create_entry).layer(Extension(db.clone())),
-            )
-            .route(
-                "/api/highscore",
-                get(highscore).layer(Extension(db.clone())),
-            )
-            .layer(
-                CorsLayer::new()
-                    .allow_origin(Any)
-                    .allow_methods([Method::GET, Method::POST])
-                    .allow_headers(vec![
-                        axum::http::header::CONTENT_TYPE,
-                        axum::http::header::AUTHORIZATION,
-                    ]),
-            );
+        .route(
+            "/api/authorize",
+            post(authorize).layer(Extension(db.clone())),
+        )
+        .route(
+            "/api/create_user",
+            post(create_user).layer(Extension(db.clone())),
+        )
+        .route(
+            "/api/get_meters",
+            get(get_meters).layer(Extension(db.clone())),
+        )
+        .route(
+            "/api/create_entry",
+            post(create_entry).layer(Extension(db.clone())),
+        )
+        .route(
+            "/api/highscore",
+            get(highscore).layer(Extension(db.clone())),
+        )
+        .layer(
+            CorsLayer::new()
+                .allow_origin(Any)
+                .allow_methods([Method::GET, Method::POST])
+                .allow_headers(vec![
+                    axum::http::header::CONTENT_TYPE,
+                    axum::http::header::AUTHORIZATION,
+                ]),
+        );
 
-        let index = frontend_path.to_string() + "index.html";
-        let spa_service = get_service(ServeFile::new(index)).handle_error(|_| async move {
-            (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error")
-        });
-        // build our application with a route
-        let frontend_routes = Router::new()
-            .route("/", spa_service.clone())
-            .route("/login", spa_service.clone())
-            .route("/register", spa_service.clone())
-            .route("/highscore", spa_service.clone())
-            .fallback(
-                get_service(ServeDir::new(frontend_path)).handle_error(|_| async move {
-                    (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error")
-                }),
-            );
+    let index = frontend_path.to_string() + "index.html";
+    let spa_service = get_service(ServeFile::new(index)).handle_error(|_| async move {
+        (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error")
+    });
+    // build our application with a route
+    let frontend_routes = Router::new()
+        .route("/", spa_service.clone())
+        .route("/login", spa_service.clone())
+        .route("/register", spa_service.clone())
+        .route("/highscore", spa_service.clone())
+        .fallback(
+            get_service(ServeDir::new(frontend_path)).handle_error(|_| async move {
+                (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error")
+            }),
+        );
 
-        let app = if opt.no_frontend {
-            api_routes
-        } else {
-            Router::new().merge(api_routes).merge(frontend_routes)
-        };
+    let app = if opt.no_frontend {
+        api_routes
+    } else {
+        Router::new().merge(api_routes).merge(frontend_routes)
+    };
 
+    if !opt.deployed {
         axum::Server::bind(&addr)
             .serve(app.into_make_service())
             .with_graceful_shutdown(shutdown_signal())
             .await
             .unwrap();
+    } else {
+        let config = RustlsConfig::from_pem_file(
+            "/etc/letsencrypt/live/quack-nak.de/fullchain.pem",
+            "/etc/letsencrypt/live/quack-nak.de/privkey.pem",
+        )
+        .await
+        .unwrap();
+
+        axum_server::bind_rustls(addr, config)
+            .serve(app.into_make_service())
+            .await
+            .unwrap();
+    }
 }
 
 async fn shutdown_signal() {
