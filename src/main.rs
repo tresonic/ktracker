@@ -116,8 +116,8 @@ async fn main() {
             .unwrap();
     } else {
         let config = RustlsConfig::from_pem_file(
-            "/etc/letsencrypt/live/quack-nak.de/fullchain.pem",
-            "/etc/letsencrypt/live/quack-nak.de/privkey.pem",
+            "/etc/letsencrypt/live/jdav-regensburg.de/fullchain.pem",
+            "/etc/letsencrypt/live/jdav-regensburg.de/privkey.pem",
         )
         .await
         .unwrap();
