@@ -1,3 +1,5 @@
+import '../logreg'
+
 import { Link, route } from "preact-router";
 import { useState } from "preact/hooks";
 import authService from "../services/auth.service";
@@ -22,6 +24,9 @@ export default function Register() {
     }
 
     const onRegister = async e => {
+        if(!username || !pass || !email) {
+            return;
+        }
         document.querySelector("#register_button").classList.add("is-loading");
         const res = await authService.register(username, email, pass);
         console.log(res);
@@ -34,40 +39,18 @@ export default function Register() {
     }
 
     return (
-        // <p>Test</p>
-        <div class="modal is-active">
-            <div class="modal-background"></div>
-            <div class="modal-card">
-                <header class="modal-card-head">
-                    <p class="modal-card-title">Registrieren</p>
-                </header>
-                <section class="modal-card-body">
-                    <div class="field">
-                        <label class="label">Benutzername</label>
-                        <div class="control">
-                            <input class="input is-success" type="text" value={username} onInput={onUsernameInput}/>
-                        </div>
-                    </div>
+        <div class="logreg">
+            <h3>Registrierung</h3>
+            <input class="input" type="text" placeholder="Benutzername" value={username} onInput={onUsernameInput}/>
 
-                    <div class="field">
-                        <label class="label">Email</label>
-                        <div class="control">
-                            <input class="input is-success" type="email" value={email} onInput={onEmailInput}/>
-                        </div>
-                    </div>
+            <input class="input" type="email" placeholder="E-Mail" value={email} onInput={onEmailInput}/>
+            <div class="emaildisclaimer">Die E-Mail-Adresse wird <strong>nur</strong> verwendet, um den Gewinner zu kontaktieren.</div>
+            <input class="input" type="password" placeholder="Passwort" value={pass} onInput={onPassInput}/>
+            <div class="errormsg">{errorMsg}</div>
 
-                    <div class="field">
-                    <label class="label">Passwort</label>
-                        <p class="control">
-                            <input class="input is-dark" type="password" value={pass} onInput={onPassInput}/>
-                        </p>
-                    </div>
-                    <div class="has-text-danger">{errorMsg}</div>
-                </section>
-                <footer class="modal-card-foot">
-                    <button id="register_button" class="button is-success" onClick={onRegister}>Registrieren</button>
-                    <Link class="button" href="/login">Login</Link>
-                </footer>
+            <button id="register_button" class="button is-success" onClick={onRegister}>Registrieren</button>
+            <div>
+                Schon registriert? <Link class="button" href="/login">Login</Link>
             </div>
         </div>
     );
