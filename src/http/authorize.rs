@@ -13,12 +13,6 @@ pub async fn authorize(Json(payload): Json<AuthPayload>, Extension(db): Extensio
         return Err(AuthError::MissingCredentials);
     }
 
-
-    // // Here you can check the user credentials from a database
-    // if payload.username != "foo" || payload.pass != "bar" {
-    //     return Err(AuthError::WrongCredentials);
-    // }
-
     if !db.auth_user(&payload).await {
         return Err(AuthError::WrongCredentials)
     }

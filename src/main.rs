@@ -54,7 +54,7 @@ async fn main() {
     } else {
         SocketAddr::from(([0, 0, 0, 0], 443))
     };
-
+    
     let api_routes: Router = Router::new()
         .route(
             "/api/authorize",
