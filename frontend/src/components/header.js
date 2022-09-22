@@ -25,7 +25,7 @@ export default function Header(props) {
     return (
         <header>
             <nav role="navigation" aria-label="main navigation">
-                <div class="brand"><Link class="brandcombo" href="/overview"><img class="icon" src="assets/favicon.ico" alt="icon" />&nbsp;kTracker</Link></div>
+                <div class="brand"><Link class="brandcombo" href="/overview"><img class="icon" src="assets/favicon.ico" alt="icon" />&nbsp;Einträge</Link></div>
                 <ul>
                     {authService.isLoggedIn() ?
                         <>

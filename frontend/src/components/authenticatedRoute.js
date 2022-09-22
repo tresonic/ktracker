@@ -9,7 +9,7 @@ export default function AuthenticatedRoute(props) {
     // only redirect once we've cleared the screen:
     useEffect(() => {
         if (!isLoggedIn) {
-            route('/about', true);
+            route('/login', true);
         }
     }, [isLoggedIn]);
 
