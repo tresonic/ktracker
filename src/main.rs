@@ -90,12 +90,13 @@ async fn main() {
     let spa_service = get_service(ServeFile::new(index)).handle_error(|_| async move {
         (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error")
     });
-    // build our application with a route
+    // frontend routes
     let frontend_routes = Router::new()
         .route("/", spa_service.clone())
         .route("/login", spa_service.clone())
         .route("/register", spa_service.clone())
         .route("/highscore", spa_service.clone())
+        .route("/overview", spa_service.clone())
         .fallback(
             get_service(ServeDir::new(frontend_path)).handle_error(|_| async move {
                 (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error")
