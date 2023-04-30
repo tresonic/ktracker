@@ -39,18 +39,18 @@ jobs:
         run: |
           cargo build --release
           
-      - name: Build Frontend
-        run: |
-          cd frontend
-          npm install
-          npm run build
-          cd ..
+#      - name: Build Frontend
+#        run: |
+#          cd frontend
+#          npm install
+#          npm run build
+#          cd ..
           
       - name: Package Application
         run: |
           zip -j ktracker.zip target/release/ktracker setup.sh
-          (cd frontend; zip -r ../ktracker.zip build)
-          7z rn ktracker.zip build frontend
+#          (cd frontend; zip -r ../ktracker.zip build)
+#          7z rn ktracker.zip build frontend
           
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
