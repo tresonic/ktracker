@@ -1,6 +1,6 @@
 {
-  "name": "kTracker",
-  "short_name": "kTracker",
+  "name": "Fahrradchallenge",
+  "short_name": "Fahrradchallenge",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
