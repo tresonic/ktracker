@@ -35,13 +35,13 @@ jobs:
         run: |
           cargo build --release
           
-     - name: Build Frontend
-       run: |
-         cd frontend
-         npm install
-         npm run build
-         cd ..
-          
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+          cd ..
+            
       - name: Package Application
         run: |
           zip -j ktracker.zip target/release/ktracker setup.sh
