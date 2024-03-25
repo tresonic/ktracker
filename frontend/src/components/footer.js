@@ -3,7 +3,7 @@ export default function Footer() {
         <footer class="footer">
             <a href="https://alpenverein-regensburg.de/index.php/impressum">Impressum</a><br />
 
-            <strong>kTracker 2022</strong>
+            <strong>kTracker 2024</strong>
         </footer>
     );
 }
