@@ -35,17 +35,18 @@ export default function Login() {
     return (
         <div class="logreg">
             <h3>Anmeldung</h3>
+            <form class="logreg" onSubmit={onLogin}>
+                <div class="field">
+                    <input class="input" type="text" placeholder="Benutzername" value={username} onInput={onUsernameInput} />
+                </div>
 
-            <div class="field">
-                <input class="input" type="text" placeholder="Benutzername" value={username} onInput={onUsernameInput} />
-            </div>
+                <div class="field">
+                    <input class="input" type="password" placeholder="Passwort" value={pass} onInput={onPassInput} />
+                </div>
+                <div class="has-text-danger">{errorMsg}</div>
 
-            <div class="field">
-                <input class="input" type="password" placeholder="Passwort" value={pass} onInput={onPassInput} />
-            </div>
-            <div class="has-text-danger">{errorMsg}</div>
-
-            <button id="login_button" class="button is-success" onClick={onLogin} type="submit">Anmelden</button>
+                <button id="login_button" class="button is-success" onClick={onLogin} type="submit">Anmelden</button>
+            </form>
             <div>
                 Noch nicht registriert? <Link class="button" href="/register">Registrieren</Link>
             </div>

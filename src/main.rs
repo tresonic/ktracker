@@ -8,7 +8,7 @@ use axum::{
     routing::{get, get_service, post},
     Extension, Router,
 };
-use axum_server::tls_rustls::RustlsConfig;
+
 use std::net::SocketAddr;
 use structopt::StructOpt;
 use tokio::signal;
@@ -49,11 +49,7 @@ async fn main() {
         "./frontend/"
     };
 
-    let addr = if !opt.deployed {
-        SocketAddr::from(([0, 0, 0, 0], 3000))
-    } else {
-        SocketAddr::from(([0, 0, 0, 0], 443))
-    };
+    let addr = SocketAddr::from(([0, 0, 0, 0], 9000));
     
     let api_routes: Router = Router::new()
         .route(
@@ -109,25 +105,11 @@ async fn main() {
         Router::new().merge(api_routes).merge(frontend_routes)
     };
 
-    if !opt.deployed {
-        axum::Server::bind(&addr)
-            .serve(app.into_make_service())
-            .with_graceful_shutdown(shutdown_signal())
-            .await
-            .unwrap();
-    } else {
-        let config = RustlsConfig::from_pem_file(
-            "/etc/letsencrypt/live/jdav-regensburg.de/fullchain.pem",
-            "/etc/letsencrypt/live/jdav-regensburg.de/privkey.pem",
-        )
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .with_graceful_shutdown(shutdown_signal())
         .await
         .unwrap();
-
-        axum_server::bind_rustls(addr, config)
-            .serve(app.into_make_service())
-            .await
-            .unwrap();
-    }
 }
 
 async fn shutdown_signal() {

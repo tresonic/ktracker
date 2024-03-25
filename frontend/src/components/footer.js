@@ -3,7 +3,7 @@ export default function Footer() {
         <footer class="footer">
             <a href="https://alpenverein-regensburg.de/index.php/impressum">Impressum</a><br />
 
-            <strong>Fahrradchallenge 2023</strong>
+            <strong>Fahrradchallenge 2024</strong>
         </footer>
     );
 }

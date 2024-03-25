@@ -41,14 +41,17 @@ export default function Register() {
     return (
         <div class="logreg">
             <h3>Registrierung</h3>
-            <input class="input" type="text" placeholder="Benutzername" value={username} onInput={onUsernameInput}/>
+            <form class="logreg" onSubmit={onRegister}>
+                <input class="input" type="text" placeholder="Benutzername" value={username} onInput={onUsernameInput}/>
 
-            <input class="input" type="email" placeholder="E-Mail" value={email} onInput={onEmailInput}/>
-            <div class="emaildisclaimer">Die E-Mail-Adresse wird <strong>nur</strong> verwendet, um den Gewinner zu kontaktieren.</div>
-            <input class="input" type="password" placeholder="Passwort" value={pass} onInput={onPassInput}/>
-            <div class="errormsg">{errorMsg}</div>
+                <input class="input" type="email" placeholder="E-Mail" value={email} onInput={onEmailInput}/>
+                <div class="emaildisclaimer">Die E-Mail-Adresse wird <strong>nur</strong> verwendet, um den Gewinner zu kontaktieren.</div>
+                <input class="input" type="password" placeholder="Passwort" value={pass} onInput={onPassInput}/>
+                <div class="errormsg">{errorMsg}</div>
 
-            <button id="register_button" class="button is-success" onClick={onRegister}>Registrieren</button>
+                <button type="submit" id="register_button" class="button is-success" onClick={onRegister}>Registrieren</button>
+            </form>
+
             <div>
                 Schon registriert? <Link class="button" href="/login">Login</Link>
             </div>
