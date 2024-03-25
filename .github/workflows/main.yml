@@ -15,16 +15,12 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: |
-          sudo apt install sshpass
           
       - name: Build Cache
         uses: actions/cache@v3
@@ -39,18 +35,18 @@ jobs:
         run: |
           cargo build --release
           
-#      - name: Build Frontend
-#        run: |
-#          cd frontend
-#          npm install
-#          npm run build
-#          cd ..
+     - name: Build Frontend
+       run: |
+         cd frontend
+         npm install
+         npm run build
+         cd ..
           
       - name: Package Application
         run: |
           zip -j ktracker.zip target/release/ktracker setup.sh
-#          (cd frontend; zip -r ../ktracker.zip build)
-#          7z rn ktracker.zip build frontend
+          (cd frontend; zip -r ../ktracker.zip build)
+          7z rn ktracker.zip build frontend
           
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
