@@ -43,7 +43,7 @@ impl Database {
             return Some(UserCreateError::PasswordTooShort);
         }
 
-        if user.username.len() < 4 {
+        if user.username.len() < 3 {
             return Some(UserCreateError::UsernameTooShort);
         }
 
@@ -51,14 +51,14 @@ impl Database {
             .username
             .chars()
             .into_iter()
-            .all(|c| c.is_ascii_alphanumeric())
+            .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '.')
         {
             return Some(UserCreateError::UsernameBad);
         }
 
-        if !user.pass.chars().into_iter().any(|c| c.is_ascii_digit()) {
-            return Some(UserCreateError::PasswortNotGoodEnough);
-        }
+        // if !user.pass.chars().into_iter().any(|c| c.is_ascii_digit()) {
+        //     return Some(UserCreateError::PasswortNotGoodEnough);
+        // }
 
         let hash = hash(user.pass, bcrypt::DEFAULT_COST).unwrap();
         sqlx::query("INSERT INTO users (username, email, hash) VALUES (?, ?, ?)")
@@ -134,48 +134,6 @@ impl Database {
 pub async fn init_db() -> Database {
     println!("initializing database");
     let con = SqlitePool::connect("sqlite:db/db.db").await.unwrap();
-    // sqlx::query(
-    //     "CREATE TABLE IF NOT EXISTS users (
-    //   id                INTEGER PRIMARY KEY,
-    //   username          TEXT NOT NULL,
-    //   email             TEXT NOT NULL,
-    //   hash              TEXT NOT NULL
-    //   )",
-    // )
-    // .execute(&con)
-    // .await
-    // .unwrap();
-
-    // sqlx::query("insert into users (username, email, hash) values ('asdf', 'asdf@asdf.com' , ?)")
-    //     .bind(bcrypt::hash("asdf", bcrypt::DEFAULT_COST).unwrap())
-    //     .execute(&con)
-    //     .await
-    //     .unwrap();
-
-    // sqlx::query(
-    //     "CREATE TABLE IF NOT EXISTS data (
-    //   id INTEGER PRIMARY KEY,
-    //   username TEXT NOT NULL,
-    //   time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    //   meters UNSIGNED BIG INT NOT NULL)", /* FOREIGN KEY(username) REFERENCES users(username) */
-    // )
-    // .execute(&con)
-    // .await
-    // .unwrap();
-
-    // let username = "testname";
-    // let meters = 10;
-
-    // sqlx::query(
-    //     "INSERT INTO data
-    //   (username, meters)
-    //   VALUES (?, ?)",
-    // )
-    // .bind(username)
-    // .bind(meters)
-    // .execute(&con)
-    // .await
-    // .unwrap();
 
     sqlx::migrate!("./src/db/migrations")
         .run(&con)
