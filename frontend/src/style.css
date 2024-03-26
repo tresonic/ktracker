@@ -11,6 +11,8 @@ body {
     width: 75vw;
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 input {
