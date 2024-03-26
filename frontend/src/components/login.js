@@ -35,7 +35,7 @@ export default function Login() {
     return (
         <div class="logreg">
             <h3>Anmeldung</h3>
-            <form class="logreg" onSubmit={onLogin}>
+            <form class="logreg" onSubmit={e=>{e.preventDefault()}}>
                 <div class="field">
                     <input class="input" type="text" placeholder="Benutzername" value={username} onInput={onUsernameInput} />
                 </div>

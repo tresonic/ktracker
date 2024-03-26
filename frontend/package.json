@@ -23,6 +23,7 @@
     "sirv-cli": "^2.0.2"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "bulma": "^1.0.0",
     "preact": "^10.20.1",
     "preact-render-to-string": "^6.4.1",

@@ -42,13 +42,13 @@ export default function Overview() {
     }
 
     return (
-        <div class="overview">
+        <>
             <div class="scoreview">{score} km</div>
             <div class="entrybox">
                 Neuer Eintrag <br />
-                <div class="entryline">
+                <form class="entryline" onSubmit={e=>{e.preventDefault()}}>
                     <input class="inputkm" size="8" type="number" placeholder="Distanz (km)" min="0" value={input} onInput={onInput} />
-                    <button id="save_button" class="savebutton" onClick={onSave}>
+                    <button id="save_button" class="savebutton" type="submit" onClick={onSave}>
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy" width="27" height="27" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"></path>
@@ -56,7 +56,7 @@ export default function Overview() {
                                 <polyline points="14 4 14 8 8 8 8 4"></polyline>
                             </svg>
                     </button>
-                </div>
+                </form>
 
 
                 <div class="has-text-danger pb-3">{errorMsg}</div>
@@ -80,6 +80,6 @@ export default function Overview() {
                     })}
                 </tbody>
             </table>
-        </div>
+        </>
     );
 }

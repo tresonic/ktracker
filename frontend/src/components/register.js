@@ -41,7 +41,7 @@ export default function Register() {
     return (
         <div class="logreg">
             <h3>Registrierung</h3>
-            <form class="logreg" onSubmit={onRegister}>
+            <form class="logreg" onSubmit={e=>{e.preventDefault()}}>
                 <input class="input" type="text" placeholder="Benutzername" value={username} onInput={onUsernameInput}/>
 
                 <input class="input" type="email" placeholder="E-Mail" value={email} onInput={onEmailInput}/>
