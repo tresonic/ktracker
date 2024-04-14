@@ -11,8 +11,18 @@ import Error404 from './components/Error404';
 import Footer from './components/footer';
 import About from './components/about';
 import authService from './services/auth.service';
+import { useEffect } from 'preact/hooks';
+import { AUTH_VERSION } from './conf';
 
 export default function App() {
+    useEffect(() => {
+        console.log(AUTH_VERSION);
+        if (window.localStorage.getItem(AUTH_VERSION) != "v1") {
+            authService.logout();
+        }
+        
+    }, []);
+
 	return (
 		<>
 			<Header loggedIn={authService.isLoggedIn()} />

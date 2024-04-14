@@ -1,9 +1,11 @@
 import axios from "axios";
 import { apiUrl } from "./api_url";
+import { AUTH_VERSION } from "../conf";
 // if (typeof window !== "undefined") {
 // const API_URL = "http://" + window.location.hostname + ":3000/";
 
 // }
+
 
 class AuthService {
   login(username, pass) {
@@ -16,6 +18,7 @@ class AuthService {
       .then(response => {
         if (response.data.access_token && (typeof window !== "undefined")) {
           localStorage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem("version", AUTH_VERSION);
         }
         return response.data;
       }).catch(error => {
