@@ -17,7 +17,8 @@ import { AUTH_VERSION } from './conf';
 export default function App() {
     useEffect(() => {
         console.log(AUTH_VERSION);
-        if (window.localStorage.getItem(AUTH_VERSION) != "v1") {
+        if (window.localStorage.getItem("version") !== AUTH_VERSION) {
+            console.log("mismatch logout" );
             authService.logout();
         }
         
