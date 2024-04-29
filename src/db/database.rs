@@ -82,7 +82,7 @@ impl Database {
     }
 
     pub async fn get_meters(self, username: &str) -> MeterDataList {
-        let meters_vec = sqlx::query_as::<_, MeterData>("SELECT * FROM data WHERE username = ? order by time desc")
+        let meters_vec = sqlx::query_as::<_, MeterData>("SELECT id, username, time, round(meters, 2) as meters FROM data WHERE username = ? order by time desc")
             .bind(username)
             .fetch_all(&self.conn)
             .await
@@ -103,7 +103,7 @@ impl Database {
 
     pub async fn highscore(self) -> HighscoreList {
         let mut meter_vec = sqlx::query_as::<_, HighscoreEntry>(
-            "select username, sum(meters) as meters from data group by username order by meters desc",
+            "select username, round(sum(meters), 2) as meters from data group by username order by meters desc",
         )
         .fetch_all(&self.conn)
         .await
