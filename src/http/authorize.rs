@@ -21,7 +21,7 @@ pub async fn authorize(Json(payload): Json<AuthPayload>, Extension(db): Extensio
     let claims = Claims {
         id: payload.username,
         // Mandatory expiry time as UTC timestamp
-        exp: 1717243200, // Saturday, June 1, 2024 12:00:00 PM
+        exp: 4102448400, // 1.1.2100
     };
     // Create the authorization token
     let token = encode(&Header::default(), &claims, &KEYS.encoding)

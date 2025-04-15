@@ -15,7 +15,10 @@ use tokio::signal;
 use tower_http::{
     cors::{Any, CorsLayer},
     services::{ServeDir, ServeFile},
+    trace::{self, TraceLayer},
 };
+use tracing::Level;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::db::database as daba;
 use crate::http::{
@@ -39,6 +42,17 @@ struct Options {
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| {
+                // axum logs rejections from built-in extractors with the `axum::rejection`
+                // target, at `TRACE` level. `axum::rejection=trace` enables showing those events
+                "example_tracing_aka_logging=debug,tower_http=info,axum::rejection=trace".into()
+            }),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
     let opt = Options::from_args();
 
     let db = daba::init_db().await;
@@ -50,7 +64,7 @@ async fn main() {
     };
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 9000));
-    
+
     let api_routes: Router = Router::new()
         .route(
             "/api/authorize",
@@ -80,6 +94,11 @@ async fn main() {
                     axum::http::header::CONTENT_TYPE,
                     axum::http::header::AUTHORIZATION,
                 ]),
+        )
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
+                .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
         );
 
     let index = frontend_path.to_string() + "index.html";
